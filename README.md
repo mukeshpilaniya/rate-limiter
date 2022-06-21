@@ -5,6 +5,7 @@ package main
 
 import (
 	"github.com/go-redis/redis"
+	ratelimiter "github.com/mukeshpilaniya/rate-limiter"
 	"time"
 )
 
@@ -14,19 +15,19 @@ func main() {
 		Addr: "localhost:6379",
 		Password: "",
 	})
-	
+
 	// Check whether the Redis connection is in working state or not
 	strCmd :=redisClient.Ping()
 	if strCmd.Err() !=nil{
 		panic(strCmd.Err())
 	}
-	
+
 	// Create a rate limiter of sliding window type
-	rtl :=NewRateLimiter(time.Minute,25,redisClient,SLIDINGWINDOW)
-	
+	rtl :=ratelimiter.NewRateLimiter(time.Minute,25,redisClient,ratelimiter.SLIDINGWINDOW)
+
 	// Create a rate limiter of Fixed window type
-	//rtl :=NewRateLimiter(time.Minute,25,redisClient,FIXEDWINDOW)
-	
+	//rtl :=ratelimiter.NewRateLimiter(time.Minute,25,redisClient,FIXEDWINDOW)
+
 	// test rate limiter
 	for {
 		rtl.Allow("pilaniya1", time.Now())
@@ -41,6 +42,7 @@ package main
 
 import (
 	"github.com/go-redis/redis"
+	ratelimiter "github.com/mukeshpilaniya/rate-limiter"
 	"time"
 )
 
@@ -58,7 +60,7 @@ func main() {
 	}
 
 	// Create a rate limiter of sliding window type
-	rtl :=NewRateLimiter(time.Minute,25,redisClient,SLIDINGWINDOW)
+	rtl :=ratelimiter.NewRateLimiter(time.Minute,25,redisClient,ratelimiter.SLIDINGWINDOW)
 
 	// Create a rate limiter of Fixed window type
 	//rtl :=NewRateLimiter(time.Minute,25,redisClient,FIXEDWINDOW)
